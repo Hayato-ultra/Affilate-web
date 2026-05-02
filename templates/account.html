@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Account{% endblock %}
+
+{% block content %}
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+    <div class="glass-card rounded-3xl p-10 border border-white/10">
+        {% if user %}
+        <div class="flex flex-col md:flex-row justify-between items-start gap-6">
+            <div>
+                <h1 class="font-display-lg text-display-lg mb-4">Welcome back, {{ user.name }}</h1>
+                <p class="text-on-surface-variant font-body-lg mb-6">Manage your profile, alerts, and account settings in one secure place.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="glass-panel rounded-3xl p-6 border border-white/10">
+                        <div class="text-slate-400 text-xs uppercase tracking-widest mb-2">Email</div>
+                        <div class="text-white font-headline-md">{{ user.email }}</div>
+                    </div>
+                    <div class="glass-panel rounded-3xl p-6 border border-white/10">
+                        <div class="text-slate-400 text-xs uppercase tracking-widest mb-2">Role</div>
+                        <div class="text-white font-headline-md">{{ 'Administrator' if user.is_admin else 'Member' }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="self-center">
+                <a href="{{ url_for('logout') }}" class="inline-flex items-center justify-center px-8 py-4 rounded-3xl bg-red-600 text-white hover:bg-red-500 transition-all">Sign Out</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                <h2 class="font-headline-md text-2xl text-white mb-6">Sign in</h2>
+                <form action="{{ url_for('login') }}" method="post" class="space-y-6">
+                    <label class="block space-y-2 text-sm text-slate-300">
+                        <span>Email</span>
+                        <input type="email" name="email" required class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/30" placeholder="name@company.com">
+                    </label>
+                    <label class="block space-y-2 text-sm text-slate-300">
+                        <span>Password</span>
+                        <input type="password" name="password" required class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/30" placeholder="••••••••">
+                    </label>
+                    <button type="submit" class="w-full rounded-3xl bg-violet-600 py-4 text-white font-headline-md hover:bg-violet-500 transition-all">Sign In</button>
+                </form>
+            </div>
+            <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                <h2 class="font-headline-md text-2xl text-white mb-6">Create account</h2>
+                <form action="{{ url_for('register') }}" method="post" class="space-y-6">
+                    <label class="block space-y-2 text-sm text-slate-300">
+                        <span>Name</span>
+                        <input type="text" name="name" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/30" placeholder="Your name">
+                    </label>
+                    <label class="block space-y-2 text-sm text-slate-300">
+                        <span>Email</span>
+                        <input type="email" name="email" required class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/30" placeholder="name@company.com">
+                    </label>
+                    <label class="block space-y-2 text-sm text-slate-300">
+                        <span>Password</span>
+                        <input type="password" name="password" required class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/30" placeholder="••••••••">
+                    </label>
+                    <button type="submit" class="w-full rounded-3xl bg-white/10 py-4 text-white font-headline-md hover:bg-white/20 transition-all">Create Account</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
+

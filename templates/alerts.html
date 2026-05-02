@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Price Alerts{% endblock %}
+
+{% block content %}
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-6xl mx-auto">
+    <div class="glass-card rounded-xl p-6 md:p-8 border border-white/[0.06] mb-6 animate-fade-in">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="font-headline-md text-2xl md:text-3xl text-white mb-2">Price Alerts</h1>
+                <p class="text-[#a0a8c4] text-sm md:text-base">Track products and get notified when prices drop.</p>
+            </div>
+            
+        </div>
+
+    {% if not alerts %}
+        <div class="empty-state py-16">
+            <span class="material-symbols-outlined text-[72px] text-[#636b88] mb-4 block animate-float" style="opacity:0.4;">notifications_paused</span>
+            <p class="empty-state__title text-xl">No alerts set yet</p>
+            <p class="empty-state__text">Set a price alert from any product page and we'll email you when the price drops.</p>
+            <a href="{{ url_for('index') }}" class="btn-premium btn-cta px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">add_alert</span>
+                Start Tracking
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="space-y-3">
+        {% for alert in alerts %}
+        <div class="glass-card rounded-xl p-4 md:p-5 border border-white/[0.06] animate-fade-in-up {% if alert.current_price is not none and alert.current_price <= alert.desired_price %}border-emerald-500/30{% endif %}" style="animation-delay: {{ loop.index0 * 0.06 }}s; opacity: 0;" data-animate>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-headline-md text-white text-base truncate mb-1">{{ alert.product_name or alert.product_id }}</h3>
+                    <p class="text-[#636b88] text-xs truncate flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">mail</span>
+                        {{ alert.email }}
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <div class="text-center">
+                        <p class="text-[10px] uppercase tracking-[0.1em] text-[#636b88] font-semibold mb-0.5">Target</p>
+                        <p class="font-headline-md text-violet-400 text-lg">${{ "%.2f"|format(alert.desired_price|float) }}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] uppercase tracking-[0.1em] text-[#636b88] font-semibold mb-0.5">Current</p>
+                        <p class="font-headline-md text-white text-lg">{% if alert.current_price is not none %}${{ "%.2f"|format(alert.current_price|float) }}{% else %}<span class="text-[#636b88]">—</span>{% endif %}</p>
+                    </div>
+                </div>
+                <div class="sm:text-right">
+                    {% if alert.current_price is not none and alert.current_price <= alert.desired_price %}
+                    <span class="badge badge-success status-ready">Ready to Buy</span>
+                    {% else %}
+                    <span class="badge badge-warning status-watching">Watching</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="mt-6 text-center">
+        <p class="text-[#636b88] text-xs">Tracking {{ alerts|length }} alert{{ 's' if alerts|length != 1 else '' }}</p>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

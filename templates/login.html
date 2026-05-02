@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center justify-center px-4 py-24 overflow-hidden">
+    <!-- Ambient glow -->
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div class="absolute top-[-20%] left-[-15%] w-[55%] h-[55%] bg-violet-600/[0.1] rounded-full blur-[140px]"></div>
+        <div class="absolute bottom-[-15%] right-[-10%] w-[40%] h-[40%] bg-blue-500/[0.05] rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8 animate-fade-in">
+            <a href="/" class="inline-flex items-center gap-2 mb-4">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center text-lg font-black text-white">T</span>
+            </a>
+            <h1 class="font-headline-md text-2xl text-white mb-1" id="auth-heading">
+                {% if show_register %}Create your account{% else %}Welcome back{% endif %}
+            </h1>
+            <p class="text-sm text-[#a0a8c4]">
+                {% if show_register %}
+                    Track prices and get alerts on your favorite gear.
+                {% else %}
+                    Sign in to track prices and manage your alerts.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Auth Card -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 border border-white/[0.08] shadow-elevated animate-fade-in-up" style="animation-delay: 0.1s;">
+            
+            <!-- Tab Toggle -->
+            <div class="flex mb-6 bg-white/[0.04] rounded-xl p-1" role="tablist">
+                <a href="{{ url_for('login') }}" 
+                   class="flex-1 text-center py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {% if not show_register %}bg-violet-600/20 text-violet-300{% else %}text-[#636b88] hover:text-[#a0a8c4]{% endif %}"
+                   role="tab" aria-selected="{{ 'true' if not show_register else 'false' }}">
+                    Sign In
+                </a>
+                <a href="{{ url_for('register') }}" 
+                   class="flex-1 text-center py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {% if show_register %}bg-violet-600/20 text-violet-300{% else %}text-[#636b88] hover:text-[#a0a8c4]{% endif %}"
+                   role="tab" aria-selected="{{ 'true' if show_register else 'false' }}">
+                    Create Account
+                </a>
+            </div>
+
+            {% if show_register %}
+            <!-- ═══ REGISTER FORM ═══ -->
+            <form action="{{ url_for('register') }}" method="post" class="space-y-4" id="register-form">
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="reg-name">Your Name</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors text-[20px]">person</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="reg-name" name="name" placeholder="John Doe" type="text" autocomplete="name">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="reg-email">Email Address</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors text-[20px]">mail</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="reg-email" name="email" placeholder="name@example.com" type="email" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="reg-password">Password</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors text-[20px]">lock</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="reg-password" name="password" placeholder="Min 6 characters" type="password" required minlength="6" autocomplete="new-password">
+                    </div>
+                </div>
+                <button class="btn-premium btn-cta w-full py-3 rounded-xl font-headline-md text-sm flex items-center justify-center gap-2 group mt-2" type="submit" id="register-submit">
+                    <span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">person_add</span>
+                    Create Account
+                </button>
+            </form>
+
+            {% else %}
+            <!-- ═══ LOGIN FORM ═══ -->
+            <form action="{{ url_for('login') }}" method="post" class="space-y-4" id="login-form">
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="login-email">Email Address</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors text-[20px]">mail</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="login-email" name="email" placeholder="name@example.com" type="email" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="login-password">Password</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors text-[20px]">lock</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="login-password" name="password" placeholder="Your password" type="password" required autocomplete="current-password">
+                    </div>
+                </div>
+                <button class="btn-premium btn-cta w-full py-3 rounded-xl font-headline-md text-sm flex items-center justify-center gap-2 group mt-2" type="submit" id="login-submit">
+                    <span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">login</span>
+                    Sign In
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- Divider -->
+            <div class="mt-6 pt-5 border-t border-white/[0.06] text-center">
+                <div class="flex items-center justify-center gap-3 text-[11px] text-[#636b88]">
+                    <span class="material-symbols-outlined text-[14px] text-violet-400/60 filled">shield</span>
+                    <span>Secured with Supabase Authentication</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom link -->
+        <p class="text-center text-sm text-[#636b88] mt-6 animate-fade-in" style="animation-delay: 0.2s;">
+            <a href="/" class="text-violet-400 hover:text-violet-300 transition-colors inline-flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                Back to Store
+            </a>
+        </p>
+    </div>
+</section>
+{% endblock %}

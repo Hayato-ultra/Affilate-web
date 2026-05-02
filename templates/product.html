@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-6xl mx-auto">
+    <!-- Breadcrumb -->
+    <a href="{{ url_for('index') }}" class="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 mb-6 transition-colors group text-sm">
+        <span class="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+        <span class="font-headline-md">Back to Store</span>
+    </a>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 animate-fade-in">
+        <!-- ═══ Product 3D Viewer ═══ -->
+        <div class="glass-card rounded-xl overflow-hidden aspect-[4/3] lg:aspect-auto lg:min-h-[420px] relative group">
+            <!-- 3D Viewer Container -->
+            
+            
+            <img class="w-full h-full object-cover" alt="{{ product.name }}" src="{{ product.image }}" loading="lazy">
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/60 via-transparent to-transparent pointer-events-none"></div>
+            
+            <!-- Stock badge overlay -->
+            <div class="absolute top-4 right-4">
+                {% if product.stock > 0 %}
+                <span class="badge badge-success">In Stock</span>
+                {% else %}
+                <span class="badge badge-error">Out of Stock</span>
+                {% endif %}
+            </div>
+
+
+        </div>
+
+        <!-- ═══ Product Info ═══ -->
+        <div class="flex flex-col justify-center animate-fade-in" style="animation-delay: 0.15s;">
+            <!-- Category badge -->
+            <div class="mb-4">
+                <span class="badge badge-info">{{ product.category|default('Premium')|title }}</span>
+            </div>
+            
+            <h1 class="font-headline-md text-3xl md:text-4xl text-white mb-3 leading-tight">{{ product.name }}</h1>
+            <p class="text-[#a0a8c4] mb-6 leading-relaxed text-base">{{ product.description }}</p>
+
+            <!-- ═══ Price — Psychological Anchoring ═══ -->
+            <div class="price-anchor mb-6 items-center">
+                {% if product.original_price > product.price %}
+                <span class="price-anchor__original text-lg">${{ "%.2f"|format(product.original_price) }}</span>
+                {% endif %}
+                <span class="price-anchor__current text-4xl md:text-5xl font-headline-md">${{ "%.2f"|format(product.price) }}</span>
+                {% if product.original_price > product.price %}
+                <span class="price-anchor__savings text-sm">Save {{ ((1 - product.price / product.original_price) * 100)|round|int }}%</span>
+                {% endif %}
+            </div>
+            
+            <!-- Urgency / Social Proof micro-copy -->
+            {% if product.stock > 0 and product.stock < 10 %}
+            <div class="flex items-center gap-2 mb-6 text-amber-400 text-sm">
+                <span class="material-symbols-outlined text-[16px] filled animate-pulse">local_fire_department</span>
+                <span class="font-medium">Only {{ product.stock }} left — selling fast</span>
+            </div>
+            {% endif %}
+
+            <!-- ═══ Action Buttons — 44px+ touch targets ═══ -->
+            <div class="flex gap-3 mb-8">
+                <button onclick='addToWishlist({{ product|tojson }})' class="btn-premium w-12 h-12 flex items-center justify-center rounded-xl bg-violet-600/15 text-violet-400 hover:bg-violet-600/25 transition-all" aria-label="Save to wishlist">
+                    <span class="material-symbols-outlined text-[22px]">favorite</span>
+                </button>
+                <button onclick="openPriceModal('{{ product.id }}', '{{ product.name }}', {{ product.price }})" class="btn-premium w-12 h-12 flex items-center justify-center rounded-xl btn-ghost" aria-label="Track price">
+                    <span class="material-symbols-outlined text-[22px]">analytics</span>
+                </button>
+                {% if product.affiliate_url %}
+                <a href="{{ product.affiliate_url }}" target="_blank" rel="noopener noreferrer" class="btn-premium btn-buy flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-headline-md text-base transition-all">
+                    <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                    Buy Now
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- ═══ Features Card ═══ -->
+            {% if product.features %}
+            <div class="glass-card rounded-xl p-5 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <h3 class="font-headline-md text-base mb-4 flex items-center gap-2 text-white">
+                    <span class="material-symbols-outlined text-violet-400 text-[20px]">verified</span>
+                    Key Features
+                </h3>
+                <ul class="space-y-3">
+                    {% for feature in product.features %}
+                    <li class="flex items-start gap-3 text-[#a0a8c4] text-sm">
+                        <span class="material-symbols-outlined text-violet-400 text-[18px] mt-0.5 filled">check_circle</span>
+                        <span>{{ feature }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+  
+</main>
+{% endblock %}

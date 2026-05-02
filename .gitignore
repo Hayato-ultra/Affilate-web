@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+mcp.json
+.vscode/
+.claude/
+.agents/
+.cursor/
+.continue/
+.history/
+graphify-out/  
+skills-lock.json

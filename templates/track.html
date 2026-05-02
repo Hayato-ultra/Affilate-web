@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Track{% endblock %}
+
+{% block content %}
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+    <div class="glass-card rounded-3xl p-10 border border-white/10 mb-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="font-display-lg text-display-lg mb-2">Track Performance</h1>
+                <p class="text-on-surface-variant font-body-lg">Monitor alert activity, affiliate clicks, and product trend insights in one place.</p>
+            </div>
+            <div class="text-right">
+                <span class="text-slate-400 text-sm">User</span>
+                <div class="text-white font-headline-md">{{ user.name if user else 'Guest' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        <div class="glass-card rounded-3xl p-6 border border-white/10">
+            <div class="text-slate-400 uppercase tracking-widest text-xs mb-3">Weekly Growth</div>
+            <div class="text-4xl font-bold text-white">{{ stats.weekly_gains }}</div>
+            <p class="text-on-surface-variant mt-3">More conversions from recent price alerts.</p>
+        </div>
+        <div class="glass-card rounded-3xl p-6 border border-white/10">
+            <div class="text-slate-400 uppercase tracking-widest text-xs mb-3">Active Alerts</div>
+            <div class="text-4xl font-bold text-white">{{ stats.active_alerts }}</div>
+            <p class="text-on-surface-variant mt-3">Alerts currently tracking price changes.</p>
+        </div>
+        <div class="glass-card rounded-3xl p-6 border border-white/10">
+            <div class="text-slate-400 uppercase tracking-widest text-xs mb-3">Tracked Products</div>
+            <div class="text-4xl font-bold text-white">{{ stats.recent_products }}</div>
+            <p class="text-on-surface-variant mt-3">Items with recent alert activity.</p>
+        </div>
+        <div class="glass-card rounded-3xl p-6 border border-white/10">
+            <div class="text-slate-400 uppercase tracking-widest text-xs mb-3">Engagement</div>
+            <div class="text-4xl font-bold text-white">{{ stats.performance }}</div>
+            <p class="text-on-surface-variant mt-3">Estimated conversion uplift from alerts.</p>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-3xl p-8 border border-white/10">
+        <h2 class="font-headline-md text-xl text-white mb-6">Recent Tracking Events</h2>
+        <div class="space-y-4">
+            <div class="glass-panel rounded-3xl p-6 border border-white/10 flex flex-col sm:flex-row gap-4 justify-between">
+                <div>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Price Alert</p>
+                    <p class="text-white font-headline-md">SilkSound Pro Headphones dropped below $299</p>
+                </div>
+                <span class="text-green-400 font-bold">Active</span>
+            </div>
+            <div class="glass-panel rounded-3xl p-6 border border-white/10 flex flex-col sm:flex-row gap-4 justify-between">
+                <div>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Affiliate Click</p>
+                    <p class="text-white font-headline-md">12 new clicks from product landing pages</p>
+                </div>
+                <span class="text-violet-300 font-bold">Updated</span>
+            </div>
+            <div class="glass-panel rounded-3xl p-6 border border-white/10 flex flex-col sm:flex-row gap-4 justify-between">
+                <div>
+                    <p class="text-slate-400 text-sm uppercase tracking-widest">Inventory Alert</p>
+                    <p class="text-white font-headline-md">MacBook Air M2 stock is low</p>
+                </div>
+                <span class="text-yellow-300 font-bold">Monitor</span>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+

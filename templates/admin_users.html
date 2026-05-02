@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+    <div class="glass-card rounded-3xl p-8 border border-white/10 mb-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h1 class="font-display-lg text-display-lg mb-2">User Accounts</h1>
+                <p class="text-on-surface-variant">Monitor active users and verify sign-up activity.</p>
+            </div>
+            <a href="/admin" class="px-5 py-3 rounded-2xl border border-white/10 text-slate-200 hover:bg-white/5 transition-all">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-3xl p-8 border border-white/10 overflow-x-auto">
+        <table class="min-w-full text-left border-separate border-spacing-y-3">
+            <thead>
+                <tr class="text-slate-400 text-sm uppercase tracking-widest">
+                    <th class="px-4 py-3">ID</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Name</th>
+                    <th class="px-4 py-3">Role</th>
+                    <th class="px-4 py-3">Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr class="bg-slate-950/80 border border-white/10 rounded-3xl">
+                    <td class="px-4 py-4 font-medium text-white">{{ user.id }}</td>
+                    <td class="px-4 py-4 text-on-surface-variant">{{ user.email }}</td>
+                    <td class="px-4 py-4 text-on-surface-variant">{{ user.name or '-' }}</td>
+                    <td class="px-4 py-4 text-white">{{ 'Admin' if user.is_admin else 'Member' }}</td>
+                    <td class="px-4 py-4 text-on-surface-variant">{{ user.created_at | default('N/A') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-slate-500">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}

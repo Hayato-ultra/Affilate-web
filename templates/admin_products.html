@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Products{% endblock %}
+
+{% block content %}
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+    <div class="flex flex-col gap-6">
+        <div class="glass-card rounded-3xl p-8 border border-white/10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h1 class="font-display-lg text-display-lg mb-2">Product Catalog</h1>
+                    <p class="text-on-surface-variant">View and manage product inventory from Supabase only. No local fallback is used.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <form action="{{ url_for('seed_products') }}" method="post" class="inline">
+                        <button type="submit" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white hover:bg-emerald-500 transition-all">Seed Products</button>
+                    </form>
+                    <a href="/admin" class="px-5 py-3 rounded-2xl border border-white/10 text-slate-200 hover:bg-white/5 transition-all">Back to Dashboard</a>
+                    <button onclick="location.reload()" class="px-5 py-3 rounded-2xl bg-violet-600 text-white hover:bg-violet-500 transition-all">Refresh</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-8 border border-white/10 overflow-x-auto">
+            <table class="min-w-full text-left border-separate border-spacing-y-3">
+                <thead>
+                    <tr class="text-slate-400 text-sm uppercase tracking-widest">
+                        <th class="px-4 py-3">ID</th>
+                        <th class="px-4 py-3">Name</th>
+                        <th class="px-4 py-3">Category</th>
+                        <th class="px-4 py-3">Price</th>
+                        <th class="px-4 py-3">Stock</th>
+                        <th class="px-4 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr class="bg-slate-950/80 border border-white/10 rounded-3xl">
+                        <td class="px-4 py-4 font-medium text-white">{{ product.id }}</td>
+                        <td class="px-4 py-4 text-on-surface-variant">{{ product.name }}</td>
+                        <td class="px-4 py-4 text-on-surface-variant">{{ product.category | default('General') }}</td>
+                        <td class="px-4 py-4 text-white">${{ "%.2f" | format(product.price) }}</td>
+                        <td class="px-4 py-4 text-on-surface-variant">{{ product.stock }}</td>
+                        <td class="px-4 py-4">
+                            <a href="/product/{{ product.id }}" class="px-4 py-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all">View</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-slate-500">No products available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}

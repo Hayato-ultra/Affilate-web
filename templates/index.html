@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}Store{% endblock %}
+
+{% block content %}
+<!-- ═══ Hero Section — 3D Elements + Text Animation ═══ -->
+<section class="relative pt-28 pb-16 md:pt-36 md:pb-24 px-4 md:px-8 overflow-hidden">
+    <!-- Ambient glow blobs -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div class="absolute top-[-15%] left-[-10%] w-[55%] h-[55%] bg-violet-600/[0.12] rounded-full blur-[140px]"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] bg-blue-500/[0.06] rounded-full blur-[120px]"></div>
+        <div class="absolute top-[30%] right-[5%] w-[25%] h-[25%] bg-purple-500/[0.05] rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- 3D Floating Geometric Elements -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <!-- Cube -->
+        <div class="hero-3d-shape hero-3d-cube" style="top: 12%; left: 15%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 18%; left: 35%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 24%; left: 55%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 30%; left: 75%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 36%; left: 25%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 42%; left: 45%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 48%; left: 65%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 54%; left: 85%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>        
+        <div class="hero-3d-shape hero-3d-cube" style="top: 15%; left: 50%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <div class="hero-3d-shape hero-3d-cube" style="top: 45%; left: 10%;">
+            <div class="hero-cube-inner">
+                <div class="hero-cube-face hero-cube-front"></div>
+                <div class="hero-cube-face hero-cube-back"></div>
+                <div class="hero-cube-face hero-cube-right"></div>
+                <div class="hero-cube-face hero-cube-left"></div>
+                <div class="hero-cube-face hero-cube-top"></div>
+                <div class="hero-cube-face hero-cube-bottom"></div>
+            </div>
+        </div>
+        <!-- Ring -->
+        <div class="hero-3d-shape hero-3d-ring" style="top: 25%; left: 10%;"></div>
+        <div class="hero-3d-shape hero-3d-ring" style="top: 40%; left: 90%;"></div>
+        <!-- Diamond -->
+        <div class="hero-3d-shape hero-3d-diamond" style="bottom: 20%; left: 15%;"></div>
+        <div class="hero-3d-shape hero-3d-diamond" style="bottom: 35%; left: 85%;"></div>
+        <!-- Dots grid -->
+        <div class="hero-3d-shape hero-3d-dots" style="bottom: 25%; left: 8%;"></div>
+        <div class="hero-3d-shape hero-3d-dots" style="bottom: 40%; left: 92%;"></div>
+
+    </div>
+    
+    <div class="max-w-5xl mx-auto relative z-10 text-center">
+        <!-- Animated badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-600/[0.12] border border-violet-500/20 text-violet-300 text-[11px] font-semibold uppercase tracking-[0.1em] mb-6 animate-fade-in">
+            <span class="material-symbols-outlined text-[14px] filled text-violet-400 animate-pulse">star</span>
+            <span>Featured Selection</span>
+        </div>
+        
+        <!-- Hero headline — word-by-word reveal -->
+        <h1 class="font-display-lg text-[36px] sm:text-[48px] md:text-[56px] leading-[1.05] mb-5 overflow-hidden">
+            <span class="hero-word">THE</span>
+            <span class="hero-word">NEXT</span>
+            <span class="hero-word">EVOLUTION</span><br class="hidden sm:block"/>
+            <span class="hero-word text-gradient">OF</span>
+            <span class="hero-word text-gradient">DIGITAL</span>
+            <span class="hero-word text-gradient">LUXURY.</span>
+        </h1>
+        
+        <!-- Subtitle with rotating phrase -->
+        <p class="font-body-lg text-body-md md:text-body-lg text-[#a0a8c4] max-w-xl mx-auto mb-8 animate-fade-in" style="animation-delay: 0.6s;" id="hero-subtitle">
+            Curated high-performance hardware for <span id="hero-rotator" class="text-violet-300 font-semibold">Professional Creators</span>. Precision engineering meets boutique aesthetics.
+        </p>
+        
+        <!-- Single smart CTA — scroll to products -->
+        <div class="flex flex-wrap justify-center gap-3 animate-fade-in" style="animation-delay: 0.75s;">
+            <a href="#products" class="btn-premium btn-cta px-8 py-3.5 rounded-xl font-headline-md text-sm inline-flex items-center gap-2 group">
+                <span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_downward</span>
+                Browse Collection
+            </a>
+            {% if current_user %}
+            <a href="/track" class="btn-premium btn-ghost px-6 py-3.5 rounded-xl font-headline-md text-sm inline-flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">analytics</span>
+                My Tracking
+            </a>
+            {% else %}
+            <a href="/login" class="btn-premium btn-ghost px-6 py-3.5 rounded-xl font-headline-md text-sm inline-flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">notifications</span>
+                Track Prices
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- ═══ Products Section ═══ -->
+<main class="max-w-6xl mx-auto px-4 md:px-8 pb-32" id="products">
+    <!-- Section header -->
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+            <div class="w-1 h-6 rounded-full bg-gradient-to-b from-violet-500 to-purple-600"></div>
+            <h2 class="font-headline-md text-xl md:text-2xl text-white">Premium Gear</h2>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="App.toggleSearch()" class="w-10 h-10 flex items-center justify-center glass-card rounded-lg text-[#a0a8c4] hover:text-white transition-colors" aria-label="Search products">
+                <span class="material-symbols-outlined text-[20px]">search</span>
+            </button>
+            <div class="relative">
+                <button id="filter-btn" class="w-10 h-10 flex items-center justify-center glass-card rounded-lg text-[#a0a8c4] hover:text-white transition-colors" aria-label="Filter products">
+                    <span class="material-symbols-outlined text-[20px]">tune</span>
+                </button>
+                <div id="filter-dropdown" class="hidden absolute right-0 top-full mt-2 w-44 glass-panel rounded-xl overflow-hidden z-20 shadow-elevated border border-white/[0.08]">
+                    <button onclick="App.filterCategory('all')" class="w-full px-4 py-2.5 text-left text-sm text-[#a0a8c4] hover:text-white hover:bg-white/5 transition-all">All Products</button>
+                    <button onclick="App.filterCategory('audio')" class="w-full px-4 py-2.5 text-left text-sm text-[#a0a8c4] hover:text-white hover:bg-white/5 transition-all">Audio</button>
+                    <button onclick="App.filterCategory('laptop')" class="w-full px-4 py-2.5 text-left text-sm text-[#a0a8c4] hover:text-white hover:bg-white/5 transition-all">Laptops</button>
+                    <button onclick="App.filterCategory('accessory')" class="w-full px-4 py-2.5 text-left text-sm text-[#a0a8c4] hover:text-white hover:bg-white/5 transition-all">Accessories</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Panel -->
+    <div id="search-panel" class="hidden mb-6 glass-card rounded-xl p-3 animate-scale-in">
+        <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] text-[20px]">search</span>
+            <input type="text" placeholder="Search products…" onkeyup="App.search(this.value)" class="w-full bg-transparent border-none text-white placeholder:text-[#636b88] focus:outline-none pl-10 py-2 text-sm">
+        </div>
+    </div>
+
+    {% if products %}
+    <!-- ═══ Product Grid ═══ -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="product-grid">
+        {% for product in products %}
+        <div class="product-card glass-card rounded-xl overflow-hidden group border border-white/[0.06] cursor-pointer animate-fade-in-up"
+             data-category="{{ product.category|default('accessory') }}"
+             data-animate
+             style="animation-delay: {{ loop.index0 * 0.08 }}s; opacity: 0;"
+             onclick="window.location.href='{{ url_for('product', product_id=product.id) }}'">
+            
+            <!-- Image container -->
+            <div class="relative aspect-[16/10] overflow-hidden bg-[#0d1220]">
+                <img class="product-card__image w-full h-full object-cover" alt="{{ product.name }}" src="{{ product.image }}" loading="lazy">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-transparent to-transparent opacity-70"></div>
+                
+                <!-- Stock badge -->
+                <div class="absolute top-3 right-3">
+                    {% if product.stock > 0 %}
+                    <span class="badge badge-success text-[9px]">In Stock</span>
+                    {% else %}
+                    <span class="badge badge-error text-[9px]">Out of Stock</span>
+                    {% endif %}
+                </div>
+
+                <!-- Social proof badge — show on specific products -->
+                {% if loop.index == 1 %}
+                <div class="absolute top-3 left-3">
+                    <span class="badge badge-popular text-[9px]">
+                        <span class="material-symbols-outlined text-[10px] filled">trending_up</span>
+                        Most Popular
+                    </span>
+                </div>
+                {% elif loop.index == 2 %}
+                <div class="absolute top-3 left-3">
+                    <span class="badge badge-value text-[9px]">
+                        <span class="material-symbols-outlined text-[10px] filled">workspace_premium</span>
+                        Best Value
+                    </span>
+                </div>
+                {% elif loop.index == 3 %}
+                <div class="absolute top-3 left-3">
+                    <span class="badge badge-info text-[9px]">
+                        <span class="material-symbols-outlined text-[10px] filled">verified</span>
+                        Top Choice
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Card body — Proximity grouping: name + desc + price together -->
+            <div class="p-4 md:p-5">
+                <h3 class="font-headline-md text-base md:text-lg text-white mb-1.5 leading-tight">{{ product.name }}</h3>
+                <p class="text-sm text-[#a0a8c4] mb-4 line-clamp-2 leading-relaxed">{{ product.description }}</p>
+                
+                <!-- Price — Psychological Anchoring: original first (crossed), then current -->
+                <div class="price-anchor mb-4">
+                    {% if product.original_price > product.price %}
+                    <span class="price-anchor__original">${{ "%.2f"|format(product.original_price) }}</span>
+                    {% endif %}
+                    <span class="price-anchor__current text-2xl font-headline-md">${{ "%.2f"|format(product.price) }}</span>
+                    {% if product.original_price > product.price %}
+                    <!-- Loss Aversion Framing: "Save X%" -->
+                    <span class="price-anchor__savings">Save {{ ((1 - product.price / product.original_price) * 100)|round|int }}%</span>
+                    {% endif %}
+                </div>
+
+<!-- Action buttons — 44px touch targets -->
+                <div class="flex gap-2">
+                    <button onclick="event.stopPropagation(); App.addToWishlist({{ product|tojson }})" data-product-id="{{ product.id }}" class="btn-premium w-11 h-11 flex items-center justify-center rounded-lg bg-violet-600/15 text-violet-400 hover:bg-violet-600/25 transition-all" aria-label="Save to wishlist">
+                        <span class="material-symbols-outlined text-[20px]">favorite</span>
+                    </button>
+                    <button onclick="event.stopPropagation(); openPriceModal('{{ product.id }}', '{{ product.name }}', {{ product.price }})" class="btn-premium w-12 h-12 flex items-center justify-center rounded-xl btn-ghost" aria-label="Track price">
+                    <span class="material-symbols-outlined text-[22px]">analytics</span>
+                    </button>
+                    {% if product.affiliate_url %}
+                    <a href="{{ product.affiliate_url }}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="btn-premium btn-buy flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg font-headline-md text-sm transition-all">
+                        <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+                        Buy Now
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- ═══ Humanized Empty State ═══ -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] overflow-hidden">
+        <div class="empty-state py-16">
+            <span class="material-symbols-outlined text-[72px] text-[#636b88] mb-4 block animate-float" style="opacity:0.4;">inventory_2</span>
+            <p class="empty-state__title text-xl">No products available yet</p>
+            <p class="empty-state__text">Your store is ready and waiting. Seed your Supabase <code class="bg-white/5 px-1.5 py-0.5 rounded text-violet-300 text-xs">products</code> table to get started.</p>
+            <a href="/admin/login" class="btn-premium btn-cta px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">database</span>
+                Go to Admin
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}
+
+{% block modal %}
+<!-- Wishlist Drawer -->
+<div id="wishlist-drawer" class="hidden fixed inset-y-0 right-0 w-full max-w-md z-[90] bg-[#0a0e1a] border-l border-white/[0.06] transform transition-transform duration-300 overflow-y-auto shadow-elevated">
+    <div class="sticky top-0 bg-[#0a0e1a]/95 backdrop-blur-xl p-5 border-b border-white/[0.06] flex items-center justify-between">
+        <h2 class="font-headline-md text-lg text-white">Your Wishlist</h2>
+        <button onclick="App.toggleWishlist()" class="w-10 h-10 flex items-center justify-center rounded-lg text-[#636b88] hover:text-white hover:bg-white/5 transition-all" aria-label="Close wishlist">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div id="wishlist-items" class="p-5 space-y-3">
+        <div class="empty-state">
+            <span class="material-symbols-outlined empty-state__icon">favorite_border</span>
+            <p class="empty-state__title">Nothing saved yet</p>
+            <p class="empty-state__text">Tap the heart on any product to save it here for later.</p>
+            <button onclick="App.toggleWishlist()" class="btn-ghost btn-premium px-5 py-2.5 rounded-xl text-sm font-medium">Browse products</button>
+        </div>
+    </div>
+    <div class="sticky bottom-0 bg-[#0a0e1a]/95 backdrop-blur-xl p-4 border-t border-white/[0.06]">
+        <button class="btn-premium btn-cta w-full py-3 rounded-xl font-headline-md text-sm" onclick="App.toggleWishlist()">Continue browsing</button>
+    </div>
+</div>
+
+<!-- Price Alert Modal -->
+<div id="price-alert-modal" class="hidden fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="w-full max-w-md glass-panel rounded-2xl p-6 md:p-8 shadow-elevated border border-white/[0.08] relative overflow-hidden animate-scale-in">
+        <div class="absolute -top-16 -right-16 w-40 h-40 bg-violet-600/15 blur-[80px] rounded-full pointer-events-none"></div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="font-headline-md text-white text-xl mb-1" data-modal-title>Set Price Alert</h2>
+                    <p class="text-sm text-[#a0a8c4]">We'll notify you the moment it drops.</p>
+                </div>
+                <button onclick="App.closePriceModal()" class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors text-[#636b88]" aria-label="Close">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form class="space-y-4" onsubmit="event.preventDefault(); App.submitPriceAlert();">
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="alert-email">Email Address</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors text-[20px]">mail</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="alert-email" placeholder="name@example.com" type="email" required>
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] text-violet-400 uppercase tracking-[0.1em] font-semibold ml-0.5" for="alert-price">Desired Price</label>
+                    <div class="relative group">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#636b88] group-focus-within:text-violet-400 transition-colors font-bold text-sm">$</span>
+                        <input class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl py-3 pl-8 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500/40 transition-all placeholder:text-[#636b88] text-sm" id="alert-price" placeholder="249.00" type="number" step="0.01" required>
+                    </div>
+                    <p class="text-[11px] text-[#636b88] ml-0.5">Current price: <span data-current-price class="text-[#a0a8c4]">$0.00</span></p>
+                </div>
+                <button class="btn-premium btn-cta w-full py-3 rounded-xl font-headline-md text-sm flex items-center justify-center gap-2 group mt-2" type="submit">
+                    <span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">notifications_active</span>
+                    Set Alert
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div id="product-detail-modal" class="hidden fixed inset-0 z-[110] modal-overlay flex items-center justify-center p-3 md:p-6 overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="w-full max-w-4xl glass-panel rounded-2xl p-5 md:p-8 shadow-elevated border border-white/[0.08] my-4 max-h-[92vh] overflow-y-auto animate-scale-in">
+        <div class="flex justify-end mb-4">
+            <button onclick="App.closeProductModal()" class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors text-[#636b88]" aria-label="Close">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 mb-10">
+            <!-- Product Image -->
+            <div class="glass-card rounded-xl overflow-hidden aspect-[4/3] lg:aspect-auto lg:h-full">
+                <img id="modal-product-image" class="w-full h-full object-cover" src="" alt="">
+            </div>
+            
+            <!-- Product Info -->
+            <div class="flex flex-col justify-center">
+                <h1 class="font-display-lg text-2xl md:text-3xl text-white mb-3" id="modal-product-name"></h1>
+                <p class="text-[#a0a8c4] mb-5 leading-relaxed" id="modal-product-description"></p>
+                
+                <!-- Price with anchoring -->
+                <div class="price-anchor mb-2">
+                    <span class="text-[#636b88] line-through text-sm" id="modal-original-price" style="display:none;"></span>
+                    <span class="text-3xl md:text-4xl font-extrabold text-white font-headline-md" id="modal-product-price"></span>
+                    <span class="badge badge-success text-[10px]" id="modal-discount-badge" style="display:none;"></span>
+                </div>
+                
+                <!-- Stock -->
+                <div class="mb-5">
+                    <span id="modal-stock-badge" class="badge badge-info">In Stock</span>
+                </div>
+                
+                <!-- Features -->
+                <div id="modal-features" class="mb-6"></div>
+                
+                <!-- Actions -->
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick='addToWishlist(JSON.parse(document.getElementById("modal-product-json").textContent))' class="btn-premium w-11 h-11 flex items-center justify-center rounded-lg bg-violet-600/15 text-violet-400 hover:bg-violet-600/25 transition-all" aria-label="Save to wishlist">
+                        <span class="material-symbols-outlined text-[20px]">favorite</span>
+                    </button>
+                    <button onclick="App.openPriceAlertFromModal()" class="btn-premium w-11 h-11 flex items-center justify-center rounded-lg btn-ghost" aria-label="Track price">
+                        <span class="material-symbols-outlined text-[20px]">analytics</span>
+                    </button>
+                    <a id="modal-affiliate-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-premium btn-buy flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-headline-md text-sm transition-all">
+                        <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+                        Buy Now
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <div class="border-t border-white/[0.06] pt-8">
+            <h2 class="font-headline-md text-lg text-white mb-5">You might also like</h2>
+            <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+        
+        <input type="hidden" id="modal-product-json">
+    </div>
+</div>
+
+{% endblock %}
