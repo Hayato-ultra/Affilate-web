@@ -1,7 +1,6 @@
 venv/
 __pycache__/
 *.pyc
-.env
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -13,5 +12,14 @@ mcp.json
 .cursor/
 .continue/
 .history/
-graphify-out/  
+graphify-out/
 skills-lock.json
+node_modules/
+dist/
+data/
+.env
+*.log
+coverage/
+.vite/
+frontend/dist/
+frontend/node_modules/

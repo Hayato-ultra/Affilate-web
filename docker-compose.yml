@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - DB_PATH=/data/affiliate.db
+      - AMAZON_ACCESS_KEY=${AMAZON_ACCESS_KEY}
+      - AMAZON_SECRET_KEY=${AMAZON_SECRET_KEY}
+      - AMAZON_ASSOCIATE_TAG=${AMAZON_ASSOCIATE_TAG}
+      - FLIPKART_API_KEY=${FLIPKART_API_KEY}
+      - FLIPKART_AFFILIATE_ID=${FLIPKART_AFFILIATE_ID}
+      - EBAY_APP_ID=${EBAY_APP_ID}
+      - EBAY_CERT_ID=${EBAY_CERT_ID}
+      - MEESHO_PROXY_POOL=${MEESHO_PROXY_POOL}
+      - CROMA_PROXY_POOL=${CROMA_PROXY_POOL}
+    volumes:
+      - data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run worker
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - DB_PATH=/data/affiliate.db
+      - AMAZON_ACCESS_KEY=${AMAZON_ACCESS_KEY}
+      - AMAZON_SECRET_KEY=${AMAZON_SECRET_KEY}
+      - AMAZON_ASSOCIATE_TAG=${AMAZON_ASSOCIATE_TAG}
+      - FLIPKART_API_KEY=${FLIPKART_API_KEY}
+      - FLIPKART_AFFILIATE_ID=${FLIPKART_AFFILIATE_ID}
+      - EBAY_APP_ID=${EBAY_APP_ID}
+      - EBAY_CERT_ID=${EBAY_CERT_ID}
+      - MEESHO_PROXY_POOL=${MEESHO_PROXY_POOL}
+      - CROMA_PROXY_POOL=${CROMA_PROXY_POOL}
+    volumes:
+      - data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  data:
