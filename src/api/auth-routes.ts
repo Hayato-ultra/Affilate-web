@@ -2,7 +2,8 @@ import { Router, Request, Response } from 'express';
 import { getSupabaseAdmin, getSupabase } from '../db/supabase';
 import { createScopedLogger } from '../utils/logger';
 import { sanitizeHtml } from '../utils/xss';
-import { authRegisterLimit, authLoginLimit } from '../middleware/rateLimit';
+import { safeErrorMessage } from '../utils/config';
+import { authRegisterLimit, authLoginLimit, authMeLimit } from '../middleware/rateLimit';
 
 const log = createScopedLogger('auth');
 const router = Router();
@@ -15,6 +16,15 @@ router.post('/register', authRegisterLimit, async (req: Request, res: Response) 
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password required' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+      return res.status(400).json({ error: 'Password must contain uppercase, lowercase, and a number' });
     }
 
     const supabase = getSupabaseAdmin();
@@ -40,7 +50,7 @@ router.post('/register', authRegisterLimit, async (req: Request, res: Response) 
     });
   } catch (err: any) {
     log.error({ error: err.message }, 'Register error');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -69,11 +79,11 @@ router.post('/login', authLoginLimit, async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     log.error({ error: err.message }, 'Login error');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
-router.get('/me', async (req: Request, res: Response) => {
+router.get('/me', authMeLimit, async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
@@ -99,7 +109,7 @@ router.get('/me', async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     log.error({ error: err.message }, 'Get user error');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 

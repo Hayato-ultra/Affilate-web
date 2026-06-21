@@ -45,20 +45,28 @@ export class AggregationOrchestrator {
   async searchAll(query: string): Promise<AggregatorResult[]> {
     log.info({ query }, 'Starting parallel aggregation');
 
-    const results = await Promise.allSettled([
-      this.clients.amazon.search(query),
-      this.clients.flipkart.search(query),
-      this.clients.ebay.search(query),
-      this.clients.meesho.search(query),
-      this.clients.croma.search(query),
+    async function safeSearch<T>(label: string, fn: () => Promise<T>): Promise<{ status: 'fulfilled'; value: T } | { status: 'rejected'; reason: any }> {
+      try {
+        const value = await fn();
+        return { status: 'fulfilled', value };
+      } catch (err) {
+        log.error({ platform: label, error: (err as Error).message }, 'Aggregator failed');
+        return { status: 'rejected', reason: err };
+      }
+    }
+
+    const results = await Promise.all([
+      safeSearch('amazon', () => this.clients.amazon.search(query)),
+      safeSearch('flipkart', () => this.clients.flipkart.search(query)),
+      safeSearch('ebay', () => this.clients.ebay.search(query)),
+      safeSearch('meesho', () => this.clients.meesho.search(query)),
+      safeSearch('croma', () => this.clients.croma.search(query)),
     ]);
 
     const fulfilled: AggregatorResult[] = [];
     for (const result of results) {
       if (result.status === 'fulfilled') {
         fulfilled.push(result.value);
-      } else {
-        log.error({ error: result.reason?.message }, 'Aggregator failed');
       }
     }
 

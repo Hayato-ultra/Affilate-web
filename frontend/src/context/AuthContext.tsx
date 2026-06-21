@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(parsed.user);
         setToken(parsed.token);
         setIsAdmin(parsed.user?.role === 'admin');
-        if (parsed.token && !parsed.token.startsWith('mock-')) {
+        if (parsed.token) {
           authMe(parsed.token).catch(() => {
             localStorage.removeItem(STORAGE_KEY);
             setUser(null);
@@ -60,18 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    let result: { user: User; token: string };
-    try {
-      result = await authLogin(email, password);
-    } catch {
-      const mockUser: User = { id: 'mock-1', email, name: email.split('@')[0], role: 'user' };
-      const mockToken = 'mock-jwt-' + Date.now();
-      setUser(mockUser);
-      setToken(mockToken);
-      setIsAdmin(false);
-      persist(mockUser, mockToken);
-      return;
-    }
+    const result = await authLogin(email, password);
     setUser(result.user);
     setToken(result.token);
     setIsAdmin(result.user.role === 'admin');
@@ -79,21 +68,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [persist]);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
-    try {
-      await authRegister(email, password, name);
-    } catch {
-      const mockUser: User = { id: 'mock-2', email, name, role: 'user' };
-      const mockToken = 'mock-jwt-' + Date.now();
-      setUser(mockUser);
-      setToken(mockToken);
-      persist(mockUser, mockToken);
-      return;
-    }
+    await authRegister(email, password, name);
     await login(email, password);
   }, [login, persist]);
 
   const logout = useCallback(async () => {
-    if (token && !token.startsWith('mock-')) {
+    if (token) {
       try { await authLogout(token); } catch {}
     }
     setUser(null);

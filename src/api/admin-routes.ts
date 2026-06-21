@@ -3,6 +3,8 @@ import multer from 'multer';
 import { getSupabaseAdmin } from '../db/supabase';
 import { getDb } from '../db/connection';
 import { createScopedLogger } from '../utils/logger';
+import { validateUrl } from '../utils/ssrf';
+import { safeErrorMessage } from '../utils/config';
 import { scrapeUrl } from './scrape';
 import { requireAuth, requireAdmin } from '../middleware/auth';
 import { sanitizeObject } from '../utils/xss';
@@ -39,7 +41,7 @@ router.get('/products', async (req: Request, res: Response) => {
     res.json({ data: data || [], pagination: { page, page_size, total: count || 0 } });
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin list products failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -80,7 +82,7 @@ router.post('/products', async (req: Request, res: Response) => {
     res.status(201).json(data);
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin create product failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -115,7 +117,7 @@ router.put('/products/:id', async (req: Request, res: Response) => {
     res.json(data);
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin update product failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -129,7 +131,7 @@ router.delete('/products/:id', async (req: Request, res: Response) => {
     res.json({ success: true });
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin delete product failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -146,7 +148,7 @@ router.patch('/products/:id/feature', async (req: Request, res: Response) => {
     res.json(data);
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin toggle feature failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -163,7 +165,7 @@ router.get('/settings', async (_req: Request, res: Response) => {
     res.json(settings);
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin get settings failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -185,7 +187,7 @@ router.put('/settings', async (req: Request, res: Response) => {
     res.json({ success: true });
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin update settings failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -219,7 +221,7 @@ router.get('/stats', async (_req: Request, res: Response) => {
     });
   } catch (err: any) {
     log.error({ error: err.message }, 'Admin stats failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -227,9 +229,20 @@ router.get('/upload', (_req: Request, res: Response) => {
   res.json({ error: 'Use POST with multipart/form-data' });
 });
 
+const ALLOWED_MIME_TYPES = new Set([
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif',
+]);
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
 router.post('/upload', upload.single('file'), async (req: Request, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    if (!ALLOWED_MIME_TYPES.has(req.file.mimetype)) {
+      return res.status(400).json({ error: 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF, AVIF' });
+    }
+    if (req.file.size > MAX_FILE_SIZE) {
+      return res.status(400).json({ error: 'File too large. Maximum size is 5MB' });
+    }
 
     const supabase = getSupabaseAdmin();
     const ext = req.file.originalname.split('.').pop() || 'png';
@@ -252,7 +265,7 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
     res.json({ url: urlData.publicUrl });
   } catch (err: any) {
     log.error({ error: err.message }, 'Upload failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -262,11 +275,15 @@ router.post('/scrape', async (req: Request, res: Response) => {
     if (!url || typeof url !== 'string') {
       return res.status(400).json({ error: 'URL is required' });
     }
+    const ssrfCheck = await validateUrl(url);
+    if (!ssrfCheck.valid) {
+      return res.status(400).json({ error: `URL blocked: ${ssrfCheck.reason}` });
+    }
     const result = await scrapeUrl(url);
     res.json(result);
   } catch (err: any) {
     log.error({ error: err.message }, 'Scrape failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 
@@ -278,13 +295,13 @@ router.get('/analytics', async (_req: Request, res: Response) => {
       FROM cloaked_links cl ORDER BY cl.click_count DESC LIMIT 10
     `).all();
     const recentClicks = db.prepare(`
-      SELECT ca.clicked_at, ca.short_code, ca.ip_address, ca.referer
+      SELECT ca.clicked_at, ca.short_code, ca.referer
       FROM click_analytics ca ORDER BY ca.clicked_at DESC LIMIT 20
     `).all();
     res.json({ topProducts, recentClicks });
   } catch (err: any) {
     log.error({ error: err.message }, 'Analytics fetch failed');
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: safeErrorMessage(err) });
   }
 });
 

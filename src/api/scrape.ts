@@ -1,4 +1,5 @@
 import { createScopedLogger } from '../utils/logger';
+import { validateUrl } from '../utils/ssrf';
 import https from 'https';
 import http from 'http';
 
@@ -61,7 +62,11 @@ function parsePrice(text: string): number | null {
   return isNaN(num) ? null : num;
 }
 
-export function fetchHtml(url: string): Promise<string> {
+export async function fetchHtml(url: string): Promise<string> {
+  const validation = await validateUrl(url);
+  if (!validation.valid) {
+    throw new Error(`URL blocked: ${validation.reason}`);
+  }
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
     const mod = parsed.protocol === 'https:' ? https : http;

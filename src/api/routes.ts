@@ -1,20 +1,18 @@
 import { Router, Request, Response } from 'express';
-import { nanoid } from 'nanoid';
 import { searchProducts } from '../pipeline';
-import { resolveCloakedLink, recordClick, createCloakedLink, cloakedUrl } from '../affiliate/cloak';
+import { resolveCloakedLink, recordClick } from '../affiliate/cloak';
 import { cacheStats } from '../cache/cache';
 import { getDb } from '../db/connection';
 import { getSupabaseAdmin } from '../db/supabase';
 import { createScopedLogger } from '../utils/logger';
+import { validateUrl } from '../utils/ssrf';
 import { searchRateLimit, apiRateLimit } from '../middleware/rateLimit';
 import { requireAuth } from '../middleware/auth';
 import { PaginatedResponse, ProductResult } from '../types';
 import { getPriceHistory, recordCurrentPrice } from '../tracking/price-tracker';
 import { checkAlerts } from '../tracking/alert-service';
-import { scrapeUrl, ScrapedProduct } from './scrape';
-import { parseUrl, injectAffiliateTag } from '../affiliate/parser';
-import { config } from '../utils/config';
-import { searchAllPlatforms, PlatformSearchResult } from './search-platform';
+import { injectAffiliateTag } from '../affiliate/parser';
+import { config, safeErrorMessage } from '../utils/config';
 import { enqueueUrlProcessing } from '../queue/worker';
 import { sanitizeHtml } from '../utils/xss';
 
@@ -88,7 +86,7 @@ router.get('/search', searchRateLimit, async (req: Request, res: Response) => {
     res.json(result);
   } catch (err) {
     log.error({ query: q, error: (err as Error).message }, 'Search failed');
-    res.status(500).json({ error: 'Search failed', message: (err as Error).message });
+    res.status(500).json({ error: 'Search failed', message: safeErrorMessage(err) });
   }
 });
 
@@ -172,6 +170,15 @@ router.get('/go/:shortCode', async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Link not found' });
   }
 
+  try {
+    const url = new URL(entry.raw_url);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+      return res.status(400).json({ error: 'Invalid redirect URL' });
+    }
+  } catch {
+    return res.status(400).json({ error: 'Invalid redirect URL' });
+  }
+
   recordClick(
     shortCode,
     req.ip,
@@ -222,174 +229,43 @@ router.post('/process-url', requireAuth, async (req: Request, res: Response) => 
     return res.status(400).json({ error: 'url is required' });
   }
 
-  try {
-    new URL(url);
-  } catch {
-    return res.status(400).json({ error: 'Invalid URL' });
+  const ssrfCheck = await validateUrl(url);
+  if (!ssrfCheck.valid) {
+    return res.status(400).json({ error: `URL blocked: ${ssrfCheck.reason}` });
   }
 
   try {
-    const scraped = await scrapeUrl(url);
-    const parsed = parseUrl(url);
-    const tag = config.affiliate.tagMap[scraped.merchant_platform] || '';
-    const affiliateUrl = injectAffiliateTag(parsed.cleanUrl, scraped.merchant_platform, tag);
-    const productId = scraped.asin || nanoid(10);
-    const cloaked = createCloakedLink(affiliateUrl, scraped.merchant_platform, productId);
-
-    const supabase = getSupabaseAdmin();
-
-    // Start with the source product as the first platform entry
-    const crossPlatform: any[] = [{
-      merchant: scraped.merchant_platform,
-      merchant_name: scraped.merchant_name,
-      affiliate_url: affiliateUrl,
-      cloaked_url: cloakedUrl(cloaked.short_code),
-      short_code: cloaked.short_code,
-      price: scraped.price_current,
-      currency: scraped.currency_code,
-      thumbnail: scraped.thumbnail_url,
-      source: 'scraped',
-    }];
-
-    // Live search all other platforms
-    const liveResults = scraped.title
-      ? await searchAllPlatforms(scraped.title, scraped.merchant_platform)
-      : [];
-
-    // Save each live result to Supabase and build cross-platform links
-    for (const result of liveResults) {
-      if (!result.scraped) {
-        // Product URL found but couldn't scrape — still include if URL exists
-        const searchTag = config.affiliate.tagMap[result.merchant] || '';
-        const affUrl = injectAffiliateTag(result.product_url, result.merchant, searchTag);
-        crossPlatform.push({
-          merchant: result.merchant,
-          merchant_name: result.merchant_name,
-          affiliate_url: affUrl,
-          cloaked_url: affUrl,
-          short_code: '',
-          price: null,
-          currency: '',
-          thumbnail: '',
-          source: 'live',
-        });
-        continue;
-      }
-
-      const s = result.scraped;
-      const searchTag = config.affiliate.tagMap[result.merchant] || '';
-      const affUrl = injectAffiliateTag(result.product_url, result.merchant, searchTag);
-      const mc = createCloakedLink(affUrl, result.merchant, s.asin || nanoid(10));
-
-      crossPlatform.push({
-        merchant: result.merchant,
-        merchant_name: result.merchant_name,
-        affiliate_url: affUrl,
-        cloaked_url: cloakedUrl(mc.short_code),
-        short_code: mc.short_code,
-        price: s.price_current,
-        currency: s.currency_code,
-        thumbnail: s.thumbnail_url,
-        source: 'live',
-      });
-
-      // Save/update in Supabase
-      try {
-        let existingId: string | null = null;
-        if (s.asin) {
-          const { data: existing } = await supabase.from('products').select('id').eq('asin', s.asin).maybeSingle();
-          if (existing) existingId = existing.id;
-        }
-        const productData = {
-          title: s.title || scraped.title,
-          normalized_title: (s.title || scraped.title).toLowerCase(),
-          description: s.description || '',
-          price_current: s.price_current,
-          price_original: s.price_original,
-          currency_code: s.currency_code || 'USD',
-          merchant_platform: result.merchant,
-          merchant_name: result.merchant_name,
-          thumbnail_url: s.thumbnail_url || '',
-          brand: s.brand || '',
-          sku: s.sku || '',
-          category: s.category || '',
-          model_number: s.model_number || '',
-          upc: s.upc || '',
-          ean: s.ean || '',
-          asin: s.asin || '',
-          affiliate_url: affUrl,
-          match_method: 'none',
-          match_confidence: 0,
-          featured: false,
-          in_stock: true,
-        };
-        if (existingId) {
-          await supabase.from('products').update(productData).eq('id', existingId);
-        } else {
-          await supabase.from('products').insert(productData);
-        }
-      } catch (err: any) {
-        log.error({ error: err.message, merchant: result.merchant }, 'Failed to save cross-platform product');
-      }
-    }
-
-    // Also save the source product
-    let savedProduct: any = null;
-    if (scraped.title) {
-      let existingId: string | null = null;
-      if (scraped.asin) {
-        const { data: existing } = await supabase.from('products').select('id').eq('asin', scraped.asin).maybeSingle();
-        if (existing) existingId = existing.id;
-      }
-
-      const productData = {
-        title: scraped.title,
-        normalized_title: scraped.title.toLowerCase(),
-        description: scraped.description || '',
-        price_current: scraped.price_current,
-        price_original: scraped.price_original,
-        currency_code: scraped.currency_code || 'USD',
-        merchant_platform: scraped.merchant_platform,
-        merchant_name: scraped.merchant_name,
-        thumbnail_url: scraped.thumbnail_url || '',
-        brand: scraped.brand || '',
-        sku: scraped.sku || '',
-        category: scraped.category || '',
-        model_number: scraped.model_number || '',
-        upc: scraped.upc || '',
-        ean: scraped.ean || '',
-        asin: scraped.asin || '',
-        affiliate_url: affiliateUrl,
-        match_method: 'none',
-        match_confidence: 0,
-        featured: false,
-        in_stock: true,
-      };
-
-      if (existingId) {
-        const { data, error } = await supabase.from('products').update(productData).eq('id', existingId).select().single();
-        if (!error) savedProduct = data;
-      } else {
-        const { data, error } = await supabase.from('products').insert(productData).select().single();
-        if (!error) savedProduct = data;
-      }
-    }
-
-    res.json({
-      product: scraped,
-      source: {
-        platform: scraped.merchant_platform,
-        merchant_name: scraped.merchant_name,
-        affiliate_url: affiliateUrl,
-        cloaked_url: cloakedUrl(cloaked.short_code),
-        short_code: cloaked.short_code,
-      },
-      cross_platform: crossPlatform,
-      saved_product_id: savedProduct?.id || null,
-    });
+    const jobId = await enqueueUrlProcessing(url);
+    res.json({ job_id: jobId, status: 'queued' });
   } catch (err: any) {
-    log.error({ url, error: err.message }, 'URL processing failed');
-    res.status(500).json({ error: 'Failed to process URL', message: err.message });
+    log.error({ url, error: err.message }, 'Failed to enqueue URL processing');
+    res.status(500).json({ error: 'Failed to enqueue URL processing' });
+  }
+});
+
+router.get('/process-url/:jobId', async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+  if (!jobId) return res.status(400).json({ error: 'jobId is required' });
+
+  try {
+    const db = getDb();
+    const row = db.prepare('SELECT * FROM url_processing_jobs WHERE job_id = ?').get(jobId) as any;
+
+    if (!row) return res.status(404).json({ error: 'Job not found' });
+
+    const response: any = { job_id: row.job_id, status: row.status };
+
+    if (row.status === 'completed' && row.result_blob) {
+      response.result = JSON.parse(row.result_blob);
+    }
+    if (row.status === 'failed') {
+      response.error = row.error;
+    }
+
+    res.json(response);
+  } catch (err: any) {
+    log.error({ jobId, error: err.message }, 'Failed to fetch job status');
+    res.status(500).json({ error: 'Failed to fetch job status' });
   }
 });
 
@@ -401,8 +277,8 @@ router.post('/products/:id/track', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'target_price and email are required' });
   }
 
-  const sanitizedEmail = typeof email === 'string' ? email.replace(/<[^>]*>/g, '').slice(0, 254) : '';
-  if (!sanitizedEmail.includes('@')) {
+  const sanitizedEmail = typeof email === 'string' ? email.replace(/<[^>]*>/g, '').trim().slice(0, 254) : '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(sanitizedEmail)) {
     return res.status(400).json({ error: 'Invalid email address' });
   }
 
@@ -454,7 +330,7 @@ router.get('/products/:id/alert-status', async (req: Request, res: Response) => 
   const { id } = req.params;
   const email = ((req.query.email as string) || '').trim().toLowerCase();
 
-  if (!email || !email.includes('@')) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return res.json({ triggered: false });
   }
 
@@ -486,7 +362,7 @@ router.get('/products/:id/alert-status', async (req: Request, res: Response) => 
 router.get('/notifications', async (req: Request, res: Response) => {
   const email = ((req.query.email as string) || '').trim().toLowerCase();
 
-  if (!email || !email.includes('@')) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return res.json({ notifications: [], unread: 0 });
   }
 

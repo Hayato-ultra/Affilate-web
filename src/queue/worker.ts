@@ -174,10 +174,15 @@ const urlWorker = new Worker('url-processing', async (job) => {
           featured: false,
           in_stock: true,
         };
+        let savedId = existingId;
         if (existingId) {
           await supabase.from('products').update(productData).eq('id', existingId);
         } else {
-          await supabase.from('products').insert(productData);
+          const { data: inserted } = await supabase.from('products').insert(productData).select('id').single();
+          if (inserted) savedId = inserted.id;
+        }
+        if (savedId) {
+          recordCurrentPrice(savedId).catch(e => log.error({ error: e.message, productId: savedId }, 'Failed to record cross-platform price history'));
         }
       } catch (err: any) {
         log.error({ error: err.message, merchant: result.merchant }, 'Failed to save cross-platform product');
@@ -222,6 +227,9 @@ const urlWorker = new Worker('url-processing', async (job) => {
       } else {
         const { data, error } = await supabase.from('products').insert(productData).select().single();
         if (!error) savedProduct = data;
+      }
+      if (savedProduct) {
+        recordCurrentPrice(savedProduct.id).catch(e => log.error({ error: e.message, productId: savedProduct.id }, 'Failed to record source price history'));
       }
     }
 
@@ -276,6 +284,9 @@ const priceTrackingWorker = new Worker('price-tracking', async (job) => {
 
 worker.on('completed', job => log.info({ jobId: job.id }, 'Job completed'));
 worker.on('failed', (job, err) => log.error({ jobId: job?.id, error: err.message }, 'Job failed'));
+
+urlWorker.on('completed', job => log.info({ jobId: job.id }, 'URL job completed'));
+urlWorker.on('failed', (job, err) => log.error({ jobId: job?.id, error: err.message }, 'URL job failed'));
 
 export async function scheduleCacheMaintenance(): Promise<void> {
   await cacheMaintenanceQueue.add('evict-stale', {}, {

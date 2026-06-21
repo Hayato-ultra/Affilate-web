@@ -17,6 +17,13 @@ export function validateEnv(): string[] {
   return warnings;
 }
 
+export function safeErrorMessage(err: any): string {
+  if (process.env.NODE_ENV === 'production') {
+    return 'An internal error occurred';
+  }
+  return err?.message || String(err);
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',

@@ -304,7 +304,7 @@ export function uploadImage(file: File): Promise<{ url: string }> {
 
 export interface AnalyticsData {
   topProducts: Array<{ product_id: string; merchant: string; click_count: number; last_clicked_at: string }>;
-  recentClicks: Array<{ clicked_at: string; short_code: string; ip_address: string; referer: string }>;
+  recentClicks: Array<{ clicked_at: string; short_code: string; referer: string }>;
 }
 
 export function getAdminAnalytics(): Promise<AnalyticsData> {
@@ -362,11 +362,25 @@ export interface ProcessUrlResponse {
   saved_product_id: string | null;
 }
 
-export function processProductUrl(url: string): Promise<ProcessUrlResponse> {
-  return request('/process-url', {
+export async function processProductUrl(url: string): Promise<ProcessUrlResponse> {
+  const { job_id } = await request<{ job_id: string; status: string }>('/process-url', {
     method: 'POST',
     body: JSON.stringify({ url }),
   });
+
+  // Poll for result
+  for (let i = 0; i < 120; i++) {
+    await new Promise(r => setTimeout(r, 2000));
+    const status = await request<{ status: string; result?: ProcessUrlResponse; error?: string }>(`/process-url/${job_id}`);
+    if (status.status === 'completed' && status.result) {
+      return status.result;
+    }
+    if (status.status === 'failed') {
+      throw new Error(status.error || 'URL processing failed');
+    }
+  }
+
+  throw new Error('URL processing timed out');
 }
 
 export interface PriceHistoryPoint {
